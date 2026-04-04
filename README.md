@@ -48,7 +48,7 @@ Flags:
 ##  Directory Structure
 
 ```
-└── project_part1/                   # Project's root directory.
+└── Flask-App/                   # Project's root directory.
     ├── flaskApp/                    # contains the flask application
     │   ├──  assets/                 # contains images and files for the html
     │   ├──  templates/              # contains the html files
