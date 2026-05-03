@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: {{ include "flask-package.fullname" . }}-test-db
+  labels:
+    {{- include "flask-package.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  containers:
+    - name: mongo-checker
+      image: mongo:6.0
+      env:
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "flask-package.fullname" . }}-secret
+              key: mongodb-username
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "flask-package.fullname" . }}-secret
+              key: mongodb-password 
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          DB_URL="mongodb://$MONGO_USERNAME:$MONGO_PASSWORD@{{ include "flask-package.fullname" . }}-db-service:27017/{{ .Values.database.databaseName }}?authSource=admin"
+
+          echo "Connecting to MongoDB and checking collection: {{ .Values.database.collectionName }}..."
+
+          RESULT=$(mongosh "$DB_URL" --quiet --eval "db.{{ .Values.database.collectionName }}.countDocuments({})")
+
+          if [ "$RESULT" -gt 0 ]; then
+            echo "SUCCESS: Found $RESULT documents in collection."
+            exit 0
+          else
+            echo "ERROR: Collection is empty or database unreachable."
+            exit 1
+          fi
+  restartPolicy: Never

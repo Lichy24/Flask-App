@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "flask-package.fullname" . }}-test-connection-probe
+  labels:
+    {{- include "flask-package.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  containers:
+    - name: probe-connection-checker
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args: 
+      - |
+        TESTS="/healthz:{{ .Values.livenessProbe.httpGet.port }} /:{{ .Values.readinessProbe.httpGet.port }}"
+        for test in $TESTS; do
+          path=$(echo $test | cut -d: -f1)
+          port=$(echo $test | cut -d: -f2)
+
+          url="http://{{ include "flask-package.fullname" . }}-service:$port$path"
+
+          echo "Testing connection to $url"
+          if wget -qO- "$url"; then
+            echo "Connection to $url successful"
+          else
+            echo "Connection to $url failed"
+            exit 1
+          fi
+        done
+        echo "All connection tests passed"
+  restartPolicy: Never

@@ -1,0 +1,56 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "flask-package.fullname" . }}-cronjob
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            {{- range .Values.cronjob.containers }}
+            - name: {{ .name }}
+              image: "{{ .image.repository }}:{{ .image.tag }}"
+              imagePullPolicy: {{ .image.pullPolicy }}
+              {{- if .commands }}
+              command:
+                {{- range .commands }}
+                - {{tpl . $ | quote }}
+                {{- end }}
+              {{- end }}
+              {{- if .volumeMounts }}
+              volumeMounts:
+                {{- toYaml .volumeMounts | nindent 16 }}
+              {{- end }}
+              env:
+              {{- if .env }}  
+                {{- toYaml .env | nindent 16}}
+              {{- end }}
+                - name: MONGO_USERNAME
+                  valueFrom:
+                      secretKeyRef:
+                        name: {{ include "flask-package.fullname" $ }}-secret
+                        key: mongodb-username
+                - name: MONGO_PASSWORD
+                  valueFrom:
+                      secretKeyRef:
+                        name: {{ include "flask-package.fullname" $ }}-secret
+                        key: mongodb-password
+            {{- end }}
+          {{- if .Values.cronjob.volumes }}
+          volumes:
+              {{- range .Values.cronjob.volumes }}
+            - name: {{ .name }}
+              {{- if .persistentVolumeClaim }}
+              persistentVolumeClaim:
+                claimName: {{ .persistentVolumeClaim.claimName }}
+              {{- end }}
+              {{- end }}
+          {{- end }}
+          restartPolicy: {{ .Values.cronjob.restartPolicy }}
+{{- end }}

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "flask-package.fullname" . }}-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "flask-package.fullname" . }}-db
+  template:
+    metadata:
+      labels:
+        app: {{ include "flask-package.fullname" . }}-db
+    spec:
+      containers:
+        - name: {{ .Values.dbStatefulSet.container.name }}
+          image: "{{ .Values.dbStatefulSet.container.image.repository }}:{{ .Values.dbStatefulSet.container.image.tag }}"
+          imagePullPolicy: {{ .Values.dbStatefulSet.container.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.dbStatefulSet.container.port }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "flask-package.fullname" . }}-secret
+                  key: mongodb-username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "flask-package.fullname" . }}-secret
+                  key: mongodb-password
+          volumeMounts:
+            {{- with .Values.dbStatefulSet.container.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- with .Values.dbStatefulSet.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      

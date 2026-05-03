@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flask-package.fullname" . }}-db-service
+  labels:
+    {{- include "flask-package.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.dbService.port }}
+      targetPort: {{ .Values.dbService.targetPort }}
+  selector:
+    app: {{ include "flask-package.fullname" . }}-db

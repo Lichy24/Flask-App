@@ -1,0 +1,15 @@
+{{- if .Values.persistentvolume.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.persistentvolume.name }}
+spec:
+  capacity:
+    storage: {{ .Values.persistentvolume.storage }}
+  accessModes:
+    - {{ .Values.persistentvolume.accessMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistentvolume.reclaimPolicy }}
+  storageClassName: {{ .Values.persistentvolume.storageClassName }}
+  hostPath:
+    path: {{ .Values.persistentvolume.hostPath }}
+{{- end }}

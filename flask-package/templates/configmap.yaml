@@ -1,0 +1,11 @@
+{{- if .Values.configmap.enabled}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "flask-package.fullname" . }}-config
+data:
+    mongo_host: {{ include "flask-package.fullname" . }}-db-service
+    {{- with .Values.configmap.data }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

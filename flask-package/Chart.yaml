@@ -1,0 +1,10 @@
+apiVersion: v2
+name: flask-package
+description: This is chart is for the webapp application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Lichy Adi
+    email: adi.lichy@gmail.com
+    url: https://www.github.com/Lichy24
