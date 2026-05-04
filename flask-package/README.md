@@ -1,13 +1,18 @@
 # Webapp Orchestration
 
-This repository of a Flask docker application is part of project for the DevOps course of [DEVOPS Experts](https://devopsexperts.co.il/) developer.
+This repository of a Flask package application is part of project for the DevOps course of [DEVOPS Experts](https://devopsexperts.co.il/) developer.
 
 Instructor: [Nuni Doron](https://github.com/nunidoron)
 
+## Basic Struction
+
+The default build will create a Deployment with HPA of the application and database deployoment with hourly updates to the database.
+
+Below you can see and learn how to edit and change the basic struction of the package system created.
 
 ## Helm Setup
 
-This section shows how to build your yaml files and run a the system. 
+This section shows how to build your yaml files and run the system.
 
 Note: Windows and Linux commands of the helm are the same.
 
@@ -19,9 +24,9 @@ Which can be change such that can be made for better setting of the system.
 For example the number of replicaCount:
 
 `values.yaml`
-'''
-replicaCount = 3
-'''
+```bash
+    replicaCount = 3
+```
 
 ### Helm Template
 
