@@ -1,5 +1,8 @@
 # Flask App Docker
 
+![Docker Badge](https://img.shields.io/docker/v/lichy24/flask-app)
+![Docker Downloads](https://img.shields.io/docker/pulls/lichy24/flask-app)
+
 This repository of a Flask docker application is part of project for the DevOps course of [DEVOPS Experts](https://devopsexperts.co.il/) developer.
 
 Instructor: [Nuni Doron](https://github.com/nunidoron)
