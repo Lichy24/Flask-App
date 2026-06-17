@@ -158,5 +158,11 @@ Uninstall the package:
     │   ├── README.md                       # description and instruions of Flask-Orchestration
     │   ├── values.schema.json              # helm values schema
     │   └── values.yaml                     # helm values
-    └── README.md                           # description and instruions of the project
+    ├── flask-jenkins/                      # jenkins directory
+	│	├── jenkins/                        # contains the pipeline configuration files
+	│	│   ├── main.tf                     # TBA
+	│	│   └── pipeline.groovy             # groovy pipeline script
+	│	└──  README.md                      # description and instruions of flask jenkins
+	└── README.md                           # description and instruions of the project
+	
 ```
